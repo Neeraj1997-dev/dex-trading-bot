@@ -1,0 +1,52 @@
+[project]
+name = "dex-trading-platform"
+version = "1.0.0"
+description = "Production Automated DEX Trading Platform with AI analysis and deterministic risk controls"
+requires-python = ">=3.9"
+dependencies = [
+  "fastapi>=0.115.6",
+  "uvicorn[standard]>=0.34.0",
+  "motor>=3.3.0,<3.7.0",
+  "beanie>=1.27.0,<2.0.0",
+  "pymongo>=4.6.0,<4.10.0",
+  "pydantic>=2.10.4",
+  "pydantic-settings>=2.7.1",
+  "python-jose[cryptography]>=3.3.0",
+  "passlib[bcrypt]>=1.7.4",
+  "bcrypt>=4.0.1,<4.1",
+  "httpx>=0.28.1",
+  "openai>=1.59.6",
+  "python-multipart>=0.0.20",
+  "orjson>=3.10.13",
+  "structlog>=24.4.0",
+  "tenacity>=9.0.0",
+  "apscheduler>=3.10.4",
+  "email-validator>=2.2.0",
+  "eval_type_backport>=0.2.2",
+]
+
+[project.optional-dependencies]
+dev = [
+  "pytest>=8.3.4",
+  "pytest-asyncio>=0.25.0",
+  "httpx>=0.28.1",
+  "ruff>=0.9.1",
+  "mongomock-motor>=0.0.34",
+]
+
+[build-system]
+requires = ["setuptools>=75.0.0"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["app*"]
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+asyncio_default_fixture_loop_scope = "function"
+testpaths = ["tests"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py39"
