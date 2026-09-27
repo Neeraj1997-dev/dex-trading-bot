@@ -10,6 +10,7 @@ from pydantic import Field
 from pymongo import ASCENDING, DESCENDING, IndexModel
 
 from app.core.enums import (
+    AgentStep,
     BotStatus,
     OrderSide,
     OrderStatus,
@@ -52,6 +53,19 @@ class BotStateDoc(Document):
 
     class Settings:
         name = "bot_state"
+
+
+class AgentStateDoc(Document):
+    key: Indexed(str, unique=True) = "singleton"
+    step: AgentStep = AgentStep.IDLE
+    detail: str = "Waiting for the bot to start"
+    last_result: Dict[str, Any] = Field(default_factory=dict)
+    runs: int = 0
+    last_run_at: Optional[datetime] = None
+    updated_at: datetime = Field(default_factory=utcnow)
+
+    class Settings:
+        name = "agent_state"
 
 
 class MarketSnapshotDoc(Document):
@@ -210,6 +224,7 @@ class TradeHistoryDoc(Document):
 DOCUMENT_MODELS = [
     UserDoc,
     BotStateDoc,
+    AgentStateDoc,
     MarketSnapshotDoc,
     SignalDoc,
     OrderDoc,

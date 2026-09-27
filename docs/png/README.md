@@ -16,7 +16,7 @@ Operator → React dashboard (:3000) → FastAPI (:8080) → MongoDB
 
 | Step | What it does |
 | --- | --- |
-| Market data | Live Delta tickers (`BTCUSD`, `ETHUSD`), stored in MongoDB |
+| Market data | Live Delta tickers for gold (`XAUTUSD`), Bitcoin (`BTCUSD`), and Ethereum (`ETHUSD`), stored in MongoDB |
 | AI analysis | Structured `BUY` / `SELL` / `NO_TRADE` |
 | Risk engine | Deterministic limits. The model cannot skip this step |
 | Executor | Paper fill by default. Live orders only when explicitly enabled |

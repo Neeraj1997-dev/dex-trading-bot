@@ -45,6 +45,14 @@ class TradingEngine:
         self.positions = positions
         self.circuit = circuit
         self._running_cycle = False
+        self.reporter = None
+
+    async def _report(self, step: str, detail: str = "") -> None:
+        if self.reporter is None:
+            return
+        from app.core.enums import AgentStep
+
+        await self.reporter(AgentStep(step), detail)
 
     async def run_cycle(self) -> dict:
         if self._running_cycle:
@@ -61,19 +69,23 @@ class TradingEngine:
             return {"error": "bot_state_missing"}
 
         if bot.kill_switch:
+            await self._report("BLOCKED", "Kill switch is active")
             return {"skipped": True, "reason": "kill_switch"}
         if bot.status not in {BotStatus.RUNNING, BotStatus.STARTING}:
+            await self._report("BLOCKED", f"Bot is {bot.status.value}")
             return {"skipped": True, "reason": f"status_{bot.status.value}"}
         if bot.paused:
+            await self._report("BLOCKED", "Trading is paused")
             return {"skipped": True, "reason": "paused"}
 
-        # 1) Market data
+        await self._report("OBSERVE", "Fetching Delta market data")
         snapshots = await self.market.fetch_and_store()
         markets = {s.symbol: s for s in snapshots}
 
         # Circuit breaker
         open_cb, cb_reason = await self.circuit.evaluate(snapshots, bot.risk_limits)
         if open_cb:
+            await self._report("BLOCKED", cb_reason or "Circuit breaker open")
             return {"skipped": True, "reason": "circuit_breaker", "detail": cb_reason}
 
         # Mark MTM + exits
@@ -92,7 +104,7 @@ class TradingEngine:
                 continue
             history = await self.market.history(snap.symbol, limit=50)
 
-            # 2) AI analysis (structured)
+            await self._report("ANALYZE", f"Analyzing {snap.symbol}")
             analysis = await self.ai.analyze(snap, history)
             # Stable fingerprint for NO_TRADE so we keep one record per window
             if analysis.decision == TradeDecision.NO_TRADE:
@@ -154,7 +166,7 @@ class TradingEngine:
                 )
             )
 
-            # 3) Deterministic risk
+            await self._report("RISK", f"Checking risk for {analysis.symbol} {analysis.decision.value}")
             risk_result = await self.risk.evaluate(
                 analysis,
                 snap,
@@ -199,6 +211,7 @@ class TradingEngine:
             # PAPER and AUTO both execute through executor;
             # paper DEX simulates fills; live DEX uses server-side keys only.
             if bot.mode in {TradingMode.PAPER, TradingMode.AUTO}:
+                await self._report("ACT", f"{analysis.decision.value} {analysis.symbol} after risk approval")
                 order = await self.executor.execute_entry(
                     signal,
                     analysis,

@@ -59,9 +59,9 @@ class Settings(BaseSettings):
     wallet_private_key: Optional[str] = None
     rpc_url: Optional[str] = None
 
-    # Trading defaults — Delta symbols (BTCUSD, ETHUSD) or slash form (BTC/USD)
+    # Trading defaults — Delta symbols. XAUTUSD is Tether Gold.
     trading_mode: Literal["PAPER", "MANUAL_APPROVAL", "AUTO"] = "PAPER"
-    trading_pairs: str = "BTCUSD,ETHUSD"
+    trading_pairs: str = "XAUTUSD,BTCUSD,ETHUSD"
     paper_starting_balance: float = 100_000.0
     market_poll_seconds: int = 15
     engine_cycle_seconds: int = 30

@@ -27,7 +27,7 @@ services:
       DEX_PROVIDER: delta
       DEX_BASE_URL: https://api.india.delta.exchange
       TRADING_MODE: PAPER
-      TRADING_PAIRS: BTCUSD,ETHUSD
+      TRADING_PAIRS: XAUTUSD,BTCUSD,ETHUSD
       CORS_ORIGINS: http://localhost:5173,http://localhost:3000,http://localhost
     depends_on:
       mongo:

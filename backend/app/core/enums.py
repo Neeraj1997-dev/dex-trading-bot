@@ -11,6 +11,16 @@ class TradingMode(str, Enum):
     AUTO = "AUTO"
 
 
+class AgentStep(str, Enum):
+    IDLE = "IDLE"
+    OBSERVE = "OBSERVE"
+    ANALYZE = "ANALYZE"
+    RISK = "RISK"
+    ACT = "ACT"
+    DONE = "DONE"
+    BLOCKED = "BLOCKED"
+
+
 class BotStatus(str, Enum):
     STOPPED = "STOPPED"
     STARTING = "STARTING"

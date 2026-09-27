@@ -55,7 +55,7 @@ class BotScheduler:
 
     async def _engine_job(self) -> None:
         try:
-            await self.container.engine.run_cycle()
+            await self.container.agent.run()
         except Exception as exc:
             logger.error("engine_job_failed", error=str(exc))
             self.container.circuit.record_failure()

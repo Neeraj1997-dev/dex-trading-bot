@@ -18,6 +18,7 @@ Market Data → Strategy / AI Analysis → Risk Engine → Trade Executor → Po
 |---|---|
 | **Market** | Fetch prices/liquidity/volume from DEX (paper/mock/1inch) and store history in MongoDB |
 | **AI** | OpenAI structured JSON analysis (`BUY` / `SELL` / `NO_TRADE`) with Pydantic validation |
+| **Agent** | Walks observe → analyze → risk → act, records the step, and never sends an order itself |
 | **Risk** | Deterministic limits: size, daily loss, trades, exposure, SL/TP, slippage, liquidity, gas, confidence |
 | **Executor** | Submit orders, record request/response/tx hash; duplicate-signal protection |
 | **Positions** | Track entry/current/PnL/fees; auto-close on take-profit or stop-loss |
@@ -46,7 +47,7 @@ docker compose up -d --build
 - Dashboard: http://localhost:3000  
 - Login: `admin@localhost` / `ChangeMeNow!123`
 
-By default the bot uses **live Delta public tickers** (`BTCUSD`, `ETHUSD`) with **PAPER** fills (simulated). Set `DELTA_LIVE_TRADING=true` plus API credentials only when ready for real orders.
+By default the bot uses **live Delta public tickers** for gold (`XAUTUSD`), Bitcoin (`BTCUSD`), and Ethereum (`ETHUSD`) with **PAPER** fills (simulated). Set `DELTA_LIVE_TRADING=true` plus API credentials only when ready for real orders.
 
 ## Local development
 
@@ -146,7 +147,7 @@ backend/app/
   models/            # Beanie documents + Pydantic schemas
   services/
     market/ ai/ risk/ executor/ position/
-    dex/ engine/ circuit/ audit/ auth/
+    dex/ engine/ agent/ circuit/ audit/ auth/
   workers/           # APScheduler cycles
 frontend/            # React dashboard
 docs/                # API docs

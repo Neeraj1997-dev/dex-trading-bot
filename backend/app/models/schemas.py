@@ -8,6 +8,7 @@ from typing import Any, Dict, List, Literal, Optional
 from pydantic import BaseModel, Field, field_validator
 
 from app.core.enums import (
+    AgentStep,
     BotStatus,
     ConnectionHealth,
     OrderSide,
@@ -211,6 +212,14 @@ class ConnectionStatus(BaseModel):
     last_market_update: Optional[datetime] = None
 
 
+class AgentView(BaseModel):
+    step: AgentStep
+    detail: str
+    runs: int
+    last_run_at: Optional[datetime] = None
+    last_result: Dict[str, Any] = Field(default_factory=dict)
+
+
 class BotStateView(BaseModel):
     status: BotStatus
     mode: TradingMode
@@ -235,6 +244,7 @@ class AuditEventView(BaseModel):
 
 class DashboardSnapshot(BaseModel):
     bot: BotStateView
+    agent: AgentView
     portfolio: PortfolioSummary
     positions: List[PositionView]
     orders: List[OrderView]

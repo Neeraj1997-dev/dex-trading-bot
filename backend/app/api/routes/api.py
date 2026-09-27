@@ -24,6 +24,7 @@ from app.models.documents import (
     UserDoc,
 )
 from app.models.schemas import (
+    AgentView,
     AiAnalysis,
     AuditEventView,
     BotControlRequest,
@@ -80,6 +81,15 @@ async def health(request: Request) -> dict:
     }
 
 
+@router.get("/agent", response_model=AgentView, tags=["agent"])
+async def agent_status(
+    request: Request,
+    user: UserDoc = Depends(require_admin),
+) -> AgentView:
+    container = get_container(request)
+    return AgentView.model_validate(await container.agent.snapshot())
+
+
 @router.get("/dashboard", response_model=DashboardSnapshot, tags=["dashboard"])
 async def dashboard(
     request: Request,
@@ -105,7 +115,10 @@ async def dashboard(
     last_market = markets[0].timestamp if markets else None
     db_ok = await ping_db()
 
+    agent = await container.agent.snapshot()
+
     return DashboardSnapshot(
+        agent=AgentView.model_validate(agent),
         bot=BotStateView(
             status=bot.status,
             mode=bot.mode,
@@ -354,7 +367,7 @@ async def run_cycle_now(
     user: UserDoc = Depends(require_admin),
 ) -> dict:
     container = get_container(request)
-    result = await container.engine.run_cycle()
+    result = await container.agent.run()
     await write_audit("MANUAL_CYCLE", user.email, "bot", "singleton", result)
     return result
 

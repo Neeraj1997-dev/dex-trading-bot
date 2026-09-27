@@ -5,6 +5,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 
 from app.core.config import Settings
+from app.services.agent.trader import TradingAgent
 from app.services.ai.analyzer import AiAnalyzer
 from app.services.circuit.breaker import CircuitBreaker
 from app.services.dex.base import DexClient
@@ -27,6 +28,7 @@ class AppContainer:
     positions: PositionManager
     circuit: CircuitBreaker
     engine: TradingEngine
+    agent: TradingAgent
 
 
 def build_container(settings: Settings) -> AppContainer:
@@ -38,6 +40,7 @@ def build_container(settings: Settings) -> AppContainer:
     positions = PositionManager(dex)
     circuit = CircuitBreaker()
     engine = TradingEngine(dex, market, ai, risk, executor, positions, circuit)
+    agent = TradingAgent(engine)
     return AppContainer(
         settings=settings,
         dex=dex,
@@ -48,4 +51,5 @@ def build_container(settings: Settings) -> AppContainer:
         positions=positions,
         circuit=circuit,
         engine=engine,
+        agent=agent,
     )

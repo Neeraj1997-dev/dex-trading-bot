@@ -8,7 +8,7 @@ Automated trading console for [Delta Exchange](https://docs.delta.exchange/#intr
 
 | Goal | How it is met |
 | --- | --- |
-| Live market data | Delta public tickers (`BTCUSD`, `ETHUSD`) |
+| Live market data | Delta public tickers for gold (`XAUTUSD`), Bitcoin (`BTCUSD`), and Ethereum (`ETHUSD`) |
 | Structured analysis | OpenAI JSON when configured; heuristic baseline when it is not |
 | Safe execution | Risk engine, kill switch, circuit breaker, duplicate-signal block |
 | Operator control | React dashboard: start, stop, pause, mode, risk limits, approvals |
@@ -31,7 +31,7 @@ Secrets (`JWT_SECRET`, `DELTA_API_SECRET`, `OPENAI_API_KEY`, WhatsApp keys) are 
 
 ## 3. Trading cycle
 
-The scheduler polls markets every 15 seconds and runs an engine cycle every 30 seconds. A cycle does this, in order:
+The scheduler polls markets every 15 seconds and runs the trading agent every 30 seconds. The agent records each step, then calls the engine. The agent does not place orders. A cycle does this, in order:
 
 1. **Market data.** Load enabled pairs, fetch Delta tickers, store a snapshot. Quotes older than `MARKET_STALE_SECONDS` are marked stale and cannot open a trade.
 2. **AI analysis.** Build a validated `AiAnalysis` object: decision, entry, take-profit, stop-loss, confidence, risk level, and a short reason. Invalid model output becomes `NO_TRADE`.
@@ -178,7 +178,7 @@ docker-compose.yml
 | --- | --- |
 | Provider | `delta` |
 | Mode | `PAPER` |
-| Pairs | `BTCUSD`, `ETHUSD` |
+| Pairs | `XAUTUSD` (gold), `BTCUSD`, `ETHUSD` |
 | Paper balance | 100,000 USD |
 | Max position | 1,000 USD |
 | Max daily loss | 500 USD |

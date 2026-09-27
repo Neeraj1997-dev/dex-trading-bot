@@ -19,7 +19,16 @@ export interface TradingPair {
   enabled: boolean;
 }
 
+export interface AgentStatus {
+  step: string;
+  detail: string;
+  runs: number;
+  last_run_at?: string | null;
+  last_result: Record<string, unknown>;
+}
+
 export interface DashboardSnapshot {
+  agent: AgentStatus;
   bot: {
     status: string;
     mode: string;

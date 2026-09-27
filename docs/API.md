@@ -26,6 +26,10 @@ Response:
 
 Public health check for MongoDB, DEX, and OpenAI connectivity.
 
+### `GET /agent`
+
+Current agent step (`IDLE`, `OBSERVE`, `ANALYZE`, `RISK`, `ACT`, `DONE`, `BLOCKED`), detail, run count, and the last cycle result.
+
 ### `GET /dashboard`
 
 Full dashboard snapshot: bot state, portfolio, positions, orders, signals, connections, markets, trade history.
@@ -76,7 +80,7 @@ Recent audit log entries (secrets redacted).
 
 ### `POST /bot/cycle`
 
-Manually trigger one engine cycle.
+Manually trigger one agent cycle. The agent still runs market data, analysis, and the risk engine before any order.
 
 ## Trading data
 

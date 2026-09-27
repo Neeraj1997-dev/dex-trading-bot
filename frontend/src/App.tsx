@@ -24,6 +24,13 @@ function pnlClass(n: number) {
   return n >= 0 ? "positive" : "negative";
 }
 
+function marketName(symbol: string): string | null {
+  if (symbol === "XAUTUSD") return "Gold";
+  if (symbol === "BTCUSD") return "Bitcoin";
+  if (symbol === "ETHUSD") return "Ethereum";
+  return null;
+}
+
 function statusTone(value: string): "ok" | "warn" | "bad" | "info" {
   const v = value.toUpperCase();
   if (
@@ -47,6 +54,24 @@ function statusTone(value: string): "ok" | "warn" | "bad" | "info" {
     return "warn";
   }
   return "info";
+}
+
+const AGENT_STEPS = ["OBSERVE", "ANALYZE", "RISK", "ACT"] as const;
+
+function agentBadge(step: string): "ok" | "warn" | "bad" | "info" {
+  if (step === "DONE" || step === "ACT") return "ok";
+  if (step === "BLOCKED") return "bad";
+  if (step === "IDLE") return "warn";
+  return "info";
+}
+
+function agentStepClass(current: string, step: string): string {
+  const order = ["OBSERVE", "ANALYZE", "RISK", "ACT", "DONE"];
+  const currentIndex = current === "BLOCKED" || current === "IDLE" ? -1 : order.indexOf(current);
+  const stepIndex = order.indexOf(step);
+  if (current === step) return " active";
+  if (currentIndex > stepIndex) return " done";
+  return "";
 }
 
 function StatusBadge({ value }: { value: string }) {
@@ -420,6 +445,30 @@ export default function App() {
                 </div>
               </div>
 
+              <div className="card agent-card">
+                <div className="card-head">
+                  <h2>Trading agent</h2>
+                  <span className={`badge ${agentBadge(data.agent.step)}`}>{data.agent.step}</span>
+                </div>
+                <div className="agent-steps">
+                  {AGENT_STEPS.map((step) => (
+                    <span
+                      key={step}
+                      className={`agent-step${agentStepClass(data.agent.step, step)}`}
+                    >
+                      {step}
+                    </span>
+                  ))}
+                </div>
+                <p className="agent-detail">{data.agent.detail}</p>
+                <div className="kpi-sub agent-meta">
+                  {data.agent.runs} run{data.agent.runs === 1 ? "" : "s"}
+                  {data.agent.last_run_at
+                    ? ` · Last ${new Date(data.agent.last_run_at).toLocaleTimeString()}`
+                    : ""}
+                </div>
+              </div>
+
               <div className="card" style={{ marginBottom: "1rem" }}>
                 <div className="toolbar">
                   <button
@@ -775,6 +824,11 @@ export default function App() {
                           <tr key={m.symbol}>
                             <td>
                               <strong>{m.symbol}</strong>
+                              {marketName(m.symbol) && (
+                                <div className="muted" style={{ fontSize: "0.78rem" }}>
+                                  {marketName(m.symbol)}
+                                </div>
+                              )}
                             </td>
                             <td className="num">{m.price.toFixed(4)}</td>
                             <td className={`num ${pnlClass(m.price_change_24h_pct)}`}>
@@ -912,7 +966,7 @@ export default function App() {
                             <div>
                               <strong>{p.symbol}</strong>
                               <div className="muted" style={{ fontSize: "0.78rem" }}>
-                                {p.base_token}/{p.quote_token}
+                                {marketName(p.symbol) ?? `${p.base_token}/${p.quote_token}`}
                               </div>
                             </div>
                             <input
