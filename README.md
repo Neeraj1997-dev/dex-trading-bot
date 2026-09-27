@@ -6,6 +6,10 @@ Production-oriented **Python + MongoDB** trading platform with OpenAI structured
 
 ## Architecture
 
+Diagram and notes: [docs/png/README.md](docs/png/README.md) · [full system design](docs/SYSTEM_DESIGN.md)
+
+![System design](docs/png/system-design.png)
+
 ```
 Market Data → Strategy / AI Analysis → Risk Engine → Trade Executor → Position Manager → Monitoring
 ```
