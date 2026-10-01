@@ -1,4 +1,4 @@
-import type { DashboardSnapshot, RiskLimits } from "../types";
+import type { ChatMessage, DashboardSnapshot, RiskLimits } from "../types";
 
 const API_URL = import.meta.env.VITE_API_URL || "http://localhost:8080/api/v1";
 
@@ -53,6 +53,12 @@ export const api = {
       body: JSON.stringify({ symbol, enabled }),
     }),
   runCycle: () => request("/bot/cycle", { method: "POST" }),
+  chatHistory: () => request<{ messages: ChatMessage[] }>("/chat"),
+  chatSend: (message: string) =>
+    request<{ messages: ChatMessage[] }>("/chat", {
+      method: "POST",
+      body: JSON.stringify({ message }),
+    }),
   approveSignal: (id: string, approve: boolean) =>
     request(`/signals/${id}/approve`, {
       method: "POST",

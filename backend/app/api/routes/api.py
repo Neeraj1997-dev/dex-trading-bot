@@ -26,6 +26,9 @@ from app.models.documents import (
 from app.models.schemas import (
     AgentView,
     AiAnalysis,
+    ChatMessageView,
+    ChatRequest,
+    ChatThread,
     AuditEventView,
     BotControlRequest,
     BotStateView,
@@ -88,6 +91,37 @@ async def agent_status(
 ) -> AgentView:
     container = get_container(request)
     return AgentView.model_validate(await container.agent.snapshot())
+
+
+def _chat_view(doc) -> ChatMessageView:
+    return ChatMessageView(
+        id=str(doc.id),
+        role=doc.role,
+        content=doc.content,
+        created_at=doc.created_at,
+    )
+
+
+@router.get("/chat", response_model=ChatThread, tags=["chat"])
+async def chat_history(
+    request: Request,
+    user: UserDoc = Depends(require_admin),
+) -> ChatThread:
+    container = get_container(request)
+    docs = await container.chat.history()
+    return ChatThread(messages=[_chat_view(doc) for doc in docs])
+
+
+@router.post("/chat", response_model=ChatThread, tags=["chat"])
+async def chat_send(
+    body: ChatRequest,
+    request: Request,
+    user: UserDoc = Depends(require_admin),
+) -> ChatThread:
+    container = get_container(request)
+    await container.chat.reply(body.message)
+    docs = await container.chat.history()
+    return ChatThread(messages=[_chat_view(doc) for doc in docs])
 
 
 @router.get("/dashboard", response_model=DashboardSnapshot, tags=["dashboard"])

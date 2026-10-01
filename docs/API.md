@@ -26,6 +26,10 @@ Response:
 
 Public health check for MongoDB, DEX, and OpenAI connectivity.
 
+### `GET /chat` and `POST /chat`
+
+Trading desk chat. `POST` body is `{ "message": "gold price" }`. Replies use stored quotes, positions, and agent state. The chat cannot place orders.
+
 ### `GET /agent`
 
 Current agent step (`IDLE`, `OBSERVE`, `ANALYZE`, `RISK`, `ACT`, `DONE`, `BLOCKED`), detail, run count, and the last cycle result.

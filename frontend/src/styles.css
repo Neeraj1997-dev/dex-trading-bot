@@ -412,6 +412,68 @@ a {
   padding: 0 1rem 1rem;
 }
 
+.chat-panel {
+  display: flex;
+  flex-direction: column;
+  min-height: 28rem;
+}
+
+.chat-log {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  max-height: 28rem;
+  overflow: auto;
+  padding: 1rem;
+}
+
+.chat-empty {
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+.chat-bubble {
+  max-width: 36rem;
+  border-radius: 12px;
+  padding: 0.7rem 0.85rem;
+  background: var(--surface-2);
+}
+
+.chat-bubble.user {
+  align-self: flex-end;
+  background: #dbeafe;
+}
+
+.chat-bubble p {
+  margin: 0.2rem 0 0;
+  white-space: pre-wrap;
+}
+
+.chat-role {
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.chat-prompts,
+.chat-composer {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+  padding: 0 1rem 1rem;
+}
+
+.chat-composer input {
+  flex: 1;
+  min-width: 12rem;
+}
+
+.chat-error {
+  margin: 0 1rem 0.75rem;
+}
+
 .dot-row {
   display: flex;
   align-items: center;

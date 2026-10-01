@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { api } from "./api/client";
+import { ChatPanel } from "./ChatPanel";
 import type { DashboardSnapshot, RiskLimits } from "./types";
 import "./styles.css";
 
@@ -9,6 +10,7 @@ type Tab =
   | "orders"
   | "signals"
   | "markets"
+  | "chat"
   | "history"
   | "settings";
 
@@ -272,6 +274,7 @@ export default function App() {
     { id: "orders", label: "Orders", count: orders.length },
     { id: "signals", label: "Signals", count: pendingSignals || undefined },
     { id: "markets", label: "Markets" },
+    { id: "chat", label: "Chat" },
     { id: "history", label: "History" },
     { id: "settings", label: "Settings" },
   ];
@@ -795,6 +798,8 @@ export default function App() {
             </>
           )}
 
+          {tab === "chat" && <ChatPanel />}
+
           {tab === "markets" && (
             <>
               <div className="page-header">
@@ -1062,7 +1067,7 @@ export default function App() {
           [
             { id: "overview" as Tab, label: "Home" },
             { id: "positions" as Tab, label: "Pos" },
-            { id: "signals" as Tab, label: "Signals", count: pendingSignals },
+            { id: "chat" as Tab, label: "Chat" },
             { id: "markets" as Tab, label: "Mkts" },
             { id: "settings" as Tab, label: "More" },
           ] as const
@@ -1074,9 +1079,6 @@ export default function App() {
             onClick={() => selectTab(item.id)}
           >
             <span className="bottom-nav-label">{item.label}</span>
-            {"count" in item && item.count ? (
-              <span className="bottom-nav-badge">{item.count}</span>
-            ) : null}
           </button>
         ))}
       </nav>

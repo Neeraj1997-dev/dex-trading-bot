@@ -201,6 +201,18 @@ class AuditLogDoc(Document):
         ]
 
 
+class ChatMessageDoc(Document):
+    role: str
+    content: str
+    created_at: datetime = Field(default_factory=utcnow)
+
+    class Settings:
+        name = "chat_messages"
+        indexes = [
+            IndexModel([("created_at", ASCENDING)]),
+        ]
+
+
 class TradeHistoryDoc(Document):
     position_id: Optional[str] = None
     order_id: Optional[str] = None
@@ -232,4 +244,5 @@ DOCUMENT_MODELS = [
     PortfolioDoc,
     AuditLogDoc,
     TradeHistoryDoc,
+    ChatMessageDoc,
 ]

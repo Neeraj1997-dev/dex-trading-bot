@@ -19,6 +19,13 @@ export interface TradingPair {
   enabled: boolean;
 }
 
+export interface ChatMessage {
+  id: string;
+  role: "user" | "assistant";
+  content: string;
+  created_at: string;
+}
+
 export interface AgentStatus {
   step: string;
   detail: string;

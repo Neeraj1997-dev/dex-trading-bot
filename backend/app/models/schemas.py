@@ -242,6 +242,21 @@ class AuditEventView(BaseModel):
     created_at: datetime
 
 
+class ChatMessageView(BaseModel):
+    id: str
+    role: Literal["user", "assistant"]
+    content: str
+    created_at: datetime
+
+
+class ChatRequest(BaseModel):
+    message: str = Field(min_length=1, max_length=2000)
+
+
+class ChatThread(BaseModel):
+    messages: List[ChatMessageView]
+
+
 class DashboardSnapshot(BaseModel):
     bot: BotStateView
     agent: AgentView
